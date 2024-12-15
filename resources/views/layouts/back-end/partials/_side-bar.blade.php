@@ -78,7 +78,7 @@
                                                 <span class="text-truncate">
                                                     {{ __('priority.all_priorities') }}
                                                     <span class="badge badge-soft-info badge-pill ml-1">
-                                                        {{ \App\Models\Priority::count() }}
+                                                        {{ \App\Models\Priority::count() ?? 0  }}
                                                     </span>
                                                 </span>
                                             </a>
@@ -109,7 +109,7 @@
                                                 <span class="text-truncate">
                                                     {{ __('department.all_departments') }}
                                                     <span class="badge badge-soft-info badge-pill ml-1">
-                                                        {{ \App\Models\Department::count() }}
+                                                        {{ \App\Models\Department::count()  ?? 0  }}
                                                     </span>
                                                 </span>
                                             </a>
@@ -141,7 +141,7 @@
                                                 <span class="text-truncate">
                                                     {{ __('complaint.all_complaints') }}
                                                     <span class="badge badge-soft-info badge-pill ml-1">
-                                                        {{ \App\Models\ComplaintManagement::count() }}
+                                                        {{ \App\Models\ComplaintManagement::count() ?? 0  }}
                                                     </span>
                                                 </span>
                                             </a>
@@ -174,10 +174,10 @@
                                                     {{ __('complaint.all_complaints') }}
                                                     <span class="badge badge-soft-info badge-pill ml-1">
                                                         @if(auth()->user()->role_id == 1)
-                                                        {{ \App\Models\Complaint::where('user_id' , auth()->id())->count() }}
+                                                        {{ \App\Models\Complaint::where('user_id' , auth()->id())->count() ?? 0  }}
 
                                                         @else
-                                                        {{ \App\Models\Complaint::count() }}
+                                                        {{ \App\Models\Complaint::count() ?? 0  }}
 
                                                         @endif
                                                     </span>
@@ -192,9 +192,9 @@
                                                     {{ __('complaint.all_complaints_not_fiexed') }}
                                                     <span class="badge badge-soft-info badge-pill ml-1">
                                                         @if(auth()->user()->role_id == 1)
-                                                        {{ \App\Models\Complaint::where('status' , '!=' ,1)->orWhereNull('status')->where('user_id' , auth()->id())->count() }}
+                                                        {{ \App\Models\Complaint::where('status' , '!=' ,1)->orWhereNull('status')->where('user_id' , auth()->id())->count()  ?? 0 }}
                                                         @else
-                                                        {{ \App\Models\Complaint::where('status' , '!=' ,1)->orWhereNull('status')->count() }}
+                                                        {{ \App\Models\Complaint::where('status' , '!=' ,1)->orWhereNull('status')->count() ?? 0 }}
 
                                                         @endif
                                                     </span>
@@ -231,7 +231,7 @@
                                         <span class="text-truncate">
                                             {{ __('roles.all_roles') }}
                                             <span class="badge badge-soft-info badge-pill ml-1">
-                                                {{ \App\Models\Role::count() }}
+                                                {{ \App\Models\Role::count() ?? 0 }}
                                             </span>
                                         </span>
                                     </a>
@@ -268,7 +268,7 @@
                                         <span class="text-truncate">
                                             {{ __('roles.all_users') }}
                                             <span class="badge badge-soft-info badge-pill ml-1">
-                                                {{ \App\Models\User::count() }}
+                                                {{ \App\Models\User::count() ?? 0  }}
                                             </span>
                                         </span>
                                     </a>

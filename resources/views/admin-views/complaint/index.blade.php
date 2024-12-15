@@ -34,7 +34,7 @@
                                     <label class="title-color" for="name">{{ __('complaint.complaint_name') }}<span
                                             class="text-danger">*</span> </label>
                                             <div class="d-flex align-items-center">
-                                                <select class="js-select2-custom form-control me-2" name="name">
+                                                <select class="js-select2-custom form-control me-2" name="complaint_management_id">
                                                     @forelse ($complaint_managements as $complaint_management)
                                                         <option value="{{ $complaint_management->id }}">{{ $complaint_management->name }}</option>
                                                     @empty

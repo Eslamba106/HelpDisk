@@ -121,3 +121,4 @@ Route::group(['prefix'=> 'management_complaint'], function () {
     Route::get('/delete', [ComplaintManagementController::class, 'destroy'])->name('complaint_management.delete');
 });
 
+Route::get('markasread' , [ComplaintController::class , 'MarkAsRead_all'])->name('MarkAsRead_all');

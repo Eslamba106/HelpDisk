@@ -33,4 +33,6 @@ return [
     'filter'                                                                => 'فلترة البيانات',
     'from'                                                                  => 'من',
     'to'                                                                    => 'الي',
+    'notifications'                                                         => 'الاشعارات',
+    'see_all_notifications'                                                 => 'قرائة جميع الاشعارات',
 ];

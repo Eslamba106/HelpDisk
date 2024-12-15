@@ -41,7 +41,7 @@ class PriorityController extends Controller
         return view('admin-views.priority.index', $data);
     }
     public function store(Request $request){
-        $this->authorize('create_priority');
+        $this->authorize('add_new_priority');
 
         $request->validate([
             'name'              => "required|unique:priorities",

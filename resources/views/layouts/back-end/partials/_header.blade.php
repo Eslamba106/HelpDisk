@@ -90,7 +90,27 @@
                             </div>
                         </div>
                     </li>
-
+                    <?php  $notifications = auth()->user()->unreadNotifications ; ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" data-toggle="dropdown" href="#">
+                          <i class="tio-alarm"></i>
+                          <span class="badge badge-warning navbar-badge">{{ ($notifications->count() == 0) ? '' : $notifications->count() }}</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                          <span class="dropdown-item dropdown-header">{{ ($notifications->count() == 0) ? '' : $notifications->count() }} {{ ' ' . __('general.notifications') }}</span>
+                          <div class="dropdown-divider"></div>
+                          @foreach ($notifications as $notification)
+                              
+                        
+                          <a href="{{ $notification->data['url'] }}" class="dropdown-item">
+                            <i class="fas fa-envelope mr-2"></i>{{ $notification->data['title'] }}
+                            <span class="float-right text-muted text-sm">{{ $notification->created_at->shortAbsoluteDiffForHumans() }}</span>
+                          </a>
+                          @endforeach
+                          <div class="dropdown-divider"></div>
+                          <a href="{{ route('MarkAsRead_all') }}" class="dropdown-item dropdown-footer">{{ __('general.see_all_notifications') }}</a>
+                        </div>
+                      </li>
                     <li class="nav-item d-none d-md-inline-block">
                         <div class="hs-unfold">
                             <a title="Website home"

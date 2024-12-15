@@ -12,6 +12,7 @@ use App\Exports\ComplaintsExport;
 use App\Models\ComplaintManagement;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Notifications\ComplaintNotification;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ComplaintController extends Controller
@@ -24,17 +25,30 @@ class ComplaintController extends Controller
 
         if ($request->bulk_action_btn === 'update_status'  && is_array($ids) && count($ids)) {
             $data = ['status' => 1, 'worker' => $request->worker];
-            Complaint::whereIn('id', $ids)->update($data);
+            $update_status = Complaint::whereIn('id', $ids)->update($data);
+            $complaints = Complaint::whereIn('id', $ids)->get();
+            if ($update_status && $complaints) {
+                foreach ($complaints as $complaint) {
+                    $data = [
+                        'title' => "تم تصليح المشكلة " . $complaint->complaint_management->name,
+                        'body' => $complaint->description,
+                        'id' => $complaint->id,
+                        'url' => route('complaint'),
+                    ];
+                    $complaint->user->notify(new ComplaintNotification($data));
+                }
+            }
+
             return back()->with('success', __('تم التحديث بنجاح'));
         }
 
         $search      = $request['search'];
         $query_param = $search ? ['search' => $request['search']] : '';
         if ($request->from && $request->to) {
-            $fromDate = Carbon::parse($request->from)->startOfDay();  
-            $toDate = Carbon::parse($request->to)->subDay()->endOfDay(); 
+            $fromDate = Carbon::parse($request->from)->startOfDay();
+            $toDate = Carbon::parse($request->to)->subDay()->endOfDay();
         }
-            // $complaints->whereBetween('created_at', [$fromDate, $toDate]);
+        // $complaints->whereBetween('created_at', [$fromDate, $toDate]);
         if (auth()->user()->role_id == 1) {
             if ($request->bulk_action_btn === 'filter' && isset($request->from) && isset($request->to)) {
                 $complaints = Complaint::where('user_id', auth()->id())->whereBetween('created_at', [$fromDate, $toDate])->when($request['search'], function ($q) use ($request) {
@@ -189,18 +203,31 @@ class ComplaintController extends Controller
     public function store(Request $request)
     {
         $this->authorize('add_new_complaint');
-        $request->validate([
-            'name'              => "required",
-        ], [
-            'name.required'             => "الحقل مطلوب",
-        ]);
+        // $request->validate([
+        //     'name'              => "required",
+        // ], [
+        //     'name.required'             => "الحقل مطلوب",
+        // ]);
         $complaint = Complaint::create([
-            'name'              => $request->name,
+            // 'name'              => $request->name,
             'priorirty_id'      => $request->priorirty_id,
             'department_id'     => $request->department_id,
+            'complaint_management_id'     => $request->complaint_management_id,
             'description'       => $request->description ?? null,
             'user_id'           => auth()->id() ?? null,
         ]);
+        if (isset($complaint)) {
+            $users = User::where('role_id', 2)->get();
+            $data = [
+                'title' => "تم اضافة شكوي " . $complaint->complaint_management->name,
+                'body' => $complaint->description,
+                'id' => $complaint->id,
+                'url' => route('complaint'),
+            ];
+            foreach ($users as $user) {
+                $user->notify(new ComplaintNotification($data));
+            }
+        }
         return redirect()->route('complaint')->with("success", __("تم الاضافة بنجاح"));
     }
     public function edit($id)
@@ -234,6 +261,7 @@ class ComplaintController extends Controller
             "name"              => $request->name,
             'priorirty_id'      => $request->priorirty_id,
             'department_id'     => $request->department_id,
+            'complaint_management_id'     => $request->complaint_management_id,
             "description"       => $request->description,
         ]);
 
@@ -251,5 +279,15 @@ class ComplaintController extends Controller
     public function exportExcel()
     {
         return Excel::download(new ComplaintsExport, 'complaints.xlsx');
+    }
+    public function MarkAsRead_all(Request $request)
+    {
+        $userUnreadNotification = auth()->user()->unreadNotifications;
+        if($userUnreadNotification) {
+            $userUnreadNotification->markAsRead();
+            return back();
+        }
+
+
     }
 }

@@ -40,5 +40,7 @@ return [
     'filter'                                                                => 'Filter Data',
     'from'                                                                  => 'From',
     'to'                                                                    => 'To',
+    'notifications'                                                         => 'Notifications',
+    'see_all_notifications'                                                 => 'See All Notifications',
 
 ];

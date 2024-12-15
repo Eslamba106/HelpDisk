@@ -16,5 +16,8 @@ class Complaint extends Model
     public function priority(){
         return $this->belongsTo(Priority::class , 'priorirty_id');
     }
+    public function complaint_management(){
+        return $this->belongsTo(ComplaintManagement::class , 'complaint_management_id');
+    }
 
 }
